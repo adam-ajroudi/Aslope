@@ -16,7 +16,7 @@ export function getPlaceholderImagePath(type: TriggerType): string {
   return PLACEHOLDER_IMAGES[type]
 }
 
-export function getHardcodedNudge(type: TriggerType): NudgePayload {
+export function getHardcodedNudge(type: TriggerType): Omit<NudgePayload, 'modality'> {
   return {
     type,
     quote: FALLBACK_QUOTES[type],

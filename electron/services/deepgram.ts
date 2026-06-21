@@ -16,7 +16,7 @@ export async function synthesizeSpeechToFile(text: string, destPath: string): Pr
   }
 
   const model = getDeepgramVoiceModel()
-  const url = `https://api.deepgram.com/v1/speak?model=${encodeURIComponent(model)}`
+  const url = `https://api.deepgram.com/v1/speak?model=${encodeURIComponent(model)}&encoding=mp3`
 
   const response = await fetch(url, {
     method: 'POST',

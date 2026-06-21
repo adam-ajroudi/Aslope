@@ -121,7 +121,7 @@ function referenceHook(relationship: SeerRelationship): string {
 
 const PLEA_BY_VIBE: Record<SeerVibe, (component: string, error: string, hook: string) => string> = {
   'first-meeting': (component, error, hook) =>
-    `${hook}Hi — I'm Seer. I watch your app like a fish tank so you don't have to. We just met and ${component} already did "${error}". Awkward.`,
+    `${hook}Hi — I'm Seer. I keep an eye on your app so you don't have to. We just met and ${component} already did "${error}". Awkward.`,
   professional: (component, error, hook) =>
     `${hook}Seer here. Professional update: ${component} threw "${error}". I logged it. You coach it. We pretend we're fine.`,
   'warming-up': (component, error, hook) =>

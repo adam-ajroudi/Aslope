@@ -21,6 +21,11 @@ function placeholderCandidates(filename: string): string[] {
 
 export function resolvePlaceholderAsset(type: TriggerType): string {
   const filename = PLACEHOLDER_FILES[type]
+  const rendererUrl = process.env.ELECTRON_RENDERER_URL?.replace(/\/$/, '')
+
+  if (rendererUrl) {
+    return `${rendererUrl}/nudges/${filename}`
+  }
 
   for (const candidate of placeholderCandidates(filename)) {
     if (existsSync(candidate)) {
@@ -34,7 +39,11 @@ export function resolvePlaceholderAsset(type: TriggerType): string {
 }
 
 export function normalizeAssetUrl(pathOrUrl: string): string {
-  if (pathOrUrl.startsWith('nudge://')) {
+  if (
+    pathOrUrl.startsWith('nudge://') ||
+    pathOrUrl.startsWith('http://') ||
+    pathOrUrl.startsWith('https://')
+  ) {
     return pathOrUrl
   }
 

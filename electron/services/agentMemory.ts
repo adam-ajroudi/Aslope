@@ -126,10 +126,14 @@ export async function getMemoryContextForPrep(userId: string): Promise<string> {
     return 'No prior sessions yet — this is a first-time user.'
   }
 
+  const modalityLabels = ['quote', 'image', 'voice']
+  const nextModality = modalityLabels[(memory.nudgeModalityIndex ?? 0) % modalityLabels.length]
+
   const parts: string[] = [
     `Sessions completed: ${memory.totalSessions}`,
     `Lifetime triggers: ${memory.totalTriggers} (slouch ${memory.slouchTriggers}, phone ${memory.phoneTriggers})`,
-    `Average focus score: ${memory.focusScoreAvg.toFixed(0)}/100`
+    `Average focus score: ${memory.focusScoreAvg.toFixed(0)}/100`,
+    `Next nudge modality in rotation: ${nextModality} (quote → image → voice cycle)`
   ]
 
   if (memory.lastCoachNote) {

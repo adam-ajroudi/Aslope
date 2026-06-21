@@ -1,10 +1,10 @@
-import { session } from 'electron'
+import { session, type BrowserWindow } from 'electron'
 
 export function setupMediaPermissions(): void {
   const ses = session.defaultSession
 
   ses.setPermissionRequestHandler((_webContents, permission, callback) => {
-    if (permission === 'media') {
+    if (permission === 'media' || permission === 'mediaKeySystem') {
       callback(true)
       return
     }
@@ -12,6 +12,13 @@ export function setupMediaPermissions(): void {
   })
 
   ses.setPermissionCheckHandler((_webContents, permission) => {
-    return permission === 'media'
+    return permission === 'media' || permission === 'mediaKeySystem'
   })
+}
+
+export function configureWindowAudio(win: BrowserWindow): void {
+  if (win.isDestroyed()) return
+
+  win.webContents.setAudioMuted(false)
+  win.webContents.setBackgroundThrottling(false)
 }
