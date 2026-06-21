@@ -1,4 +1,4 @@
-import type { TriggerType } from './types'
+import type { TriggerType, NudgeModality } from './types'
 
 export type WinEntry = {
   id: string
@@ -27,6 +27,8 @@ export type AgentMemory = {
   wins: WinEntry[]
   coachInsights: string[]
   lastCoachNote?: string
+  /** Rotates quote → image → voice across triggers; persisted in Redis */
+  nudgeModalityIndex?: number
   updatedAt: number
 }
 
@@ -35,6 +37,7 @@ export type SessionEventRecord = {
   sessionId: string
   timestamp: number
   type: TriggerType
+  modality: NudgeModality
   quote: string
   assetServed: string
 }

@@ -7,6 +7,8 @@ export type { SeerBanterEvent, SeerRelationship, SeerVibe } from './seer'
 
 export type TriggerType = 'slouch' | 'phone'
 
+export type NudgeModality = 'quote' | 'image' | 'voice'
+
 export type Profile = {
   userId: string
   interests: string[]
@@ -29,6 +31,7 @@ export type ImageLibrary = Record<TriggerType, string[]>
 
 export type NudgePayload = {
   type: TriggerType
+  modality: NudgeModality
   imagePath?: string
   videoPath?: string
   quote: string
@@ -106,6 +109,7 @@ export type AnchorAPI = {
   stressTest: () => Promise<void>
   sendTrigger: (payload: TriggerPayload) => Promise<void>
   onNudge: (callback: (payload: NudgePayload) => void) => () => void
+  onNudgeAudioPlay: (callback: (payload: { audioPath: string }) => void) => () => void
   onImagesReady: (callback: (payload: ImagesReadyPayload) => void) => () => void
   onVoiceReady: (callback: (payload: VoiceReadyPayload) => void) => () => void
   onDevCoachingSaved: (callback: (entry: DevCoachEntry) => void) => () => void
