@@ -99,7 +99,9 @@ export function SessionSetup({
               : 'placeholders ready'}
           </p>
 
-          <p className="session-hint">Demo triggers (CV in M1)</p>
+          <p className="session-hint">
+            Auto-detects slouch (Dorso-style) + phone (YOLO26). Manual fallback:
+          </p>
           <div className="session-triggers">
             <button
               type="button"

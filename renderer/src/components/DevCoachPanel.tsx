@@ -41,7 +41,7 @@ export function DevCoachPanel({
       )}
 
       <p className="dev-coach-hint">
-        Seer watches your app like a fish tank. When Sentry fires, you banter back — the vibe evolves.
+        Seer watches your app in the background. When Sentry fires, you banter back — the vibe evolves.
       </p>
 
       {recent.length > 0 ? (

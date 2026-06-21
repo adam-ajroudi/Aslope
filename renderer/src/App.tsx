@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { DevCoachPanel } from './components/DevCoachPanel'
+import { NudgeAudioPlayer } from './components/NudgeAudioPlayer'
 import { SessionDashboard } from './components/SessionDashboard'
 import { SessionSetup } from './components/SessionSetup'
 import { WebcamFeed } from './components/WebcamFeed'
@@ -191,6 +192,7 @@ export default function App(): React.ReactElement {
 
   return (
     <div className="app">
+      <NudgeAudioPlayer />
       <header className="app-header">
         <h1>Anchor Vision</h1>
         <p className="app-subtitle">Camera-driven focus coach</p>
@@ -198,7 +200,11 @@ export default function App(): React.ReactElement {
 
       <main className="app-main">
         <div className="app-stage">
-          <WebcamFeed />
+          <WebcamFeed
+            sessionId={sessionId}
+            onTrigger={handleTrigger}
+            triggerBusy={triggerBusy}
+          />
         </div>
 
         <aside className="app-sidebar">
