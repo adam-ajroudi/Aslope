@@ -12,7 +12,9 @@ type SessionSetupProps = {
   audioCount: number
   preparing: boolean
   onSessionStart: (taskIntent: string) => Promise<void>
+  onSessionEnd: () => Promise<void>
   onTrigger: (type: TriggerType) => Promise<void>
+  ending: boolean
   busy: boolean
 }
 
@@ -26,7 +28,9 @@ export function SessionSetup({
   audioCount,
   preparing,
   onSessionStart,
+  onSessionEnd,
   onTrigger,
+  ending,
   busy
 }: SessionSetupProps): React.ReactElement {
   const [taskIntent, setTaskIntent] = useState('Writing my thesis intro')
@@ -101,7 +105,7 @@ export function SessionSetup({
               type="button"
               className="session-btn"
               onClick={() => fireTrigger('slouch')}
-              disabled={busy}
+              disabled={busy || ending}
             >
               Slouch
             </button>
@@ -109,11 +113,20 @@ export function SessionSetup({
               type="button"
               className="session-btn"
               onClick={() => fireTrigger('phone')}
-              disabled={busy}
+              disabled={busy || ending}
             >
               Phone
             </button>
           </div>
+
+          <button
+            type="button"
+            className="session-btn session-btn--end"
+            onClick={() => void onSessionEnd()}
+            disabled={busy || ending}
+          >
+            {ending ? 'Analyzing session…' : 'End session'}
+          </button>
         </>
       )}
     </section>

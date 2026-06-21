@@ -121,4 +121,16 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.session-btn--end {
+  margin-top: 0.25rem;
+  border-color: #7f1d1d;
+  color: #fecaca;
+}
+
+.session-btn--end:hover:not(:disabled) {
+  background: #450a0a;
+  border-color: #991b1b;
 }
