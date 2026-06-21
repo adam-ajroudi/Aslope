@@ -32,9 +32,100 @@
   margin-top: 0.5rem;
   color: #f87171;
   font-size: 0.875rem;
+  line-height: 1.45;
+  max-width: 36rem;
+  margin-inline: auto;
+}
+
+.webcam-hint {
+  margin-top: 0.75rem;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  max-width: 36rem;
+  margin-inline: auto;
+}
+
+.webcam-hint code {
+  font-size: 0.72rem;
+  word-break: break-all;
+}
+
+.webcam-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.webcam-btn {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid #3b82f6;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.webcam-btn--secondary {
+  background: #1e293b;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.webcam-demo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.webcam-demo-hint {
+  position: relative;
+  z-index: 1;
+  color: #94a3b8;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  text-align: center;
+  max-width: 32rem;
+  padding: 0 1rem;
+}
+
+.webcam-demo-hint code {
+  font-size: 0.72rem;
+}
+
+.webcam-demo-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.webcam-demo-label {
+  position: relative;
+  z-index: 1;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem;
 }
 
 .webcam-status {
   font-size: 0.875rem;
   color: #6ee7b7;
+}
+
+.webcam-status--demo {
+  color: #fbbf24;
 }
