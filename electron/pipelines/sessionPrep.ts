@@ -2,6 +2,7 @@ import { PREP_JSON_SCHEMA, parsePrepJson, type SessionPrepResult } from '@shared
 import type { Profile } from '@shared/types'
 import { getAnthropicClient, getPrepModel } from '../services/anthropic'
 import { getMemoryContextForPrep } from '../services/agentMemory'
+import { getHardcodedPrep } from './prepFallback'
 
 const PREP_SYSTEM_PROMPT = `You are the voice coach for Anchor Vision, a camera-driven focus app that nudges people when they slouch or reach for their phone.
 
