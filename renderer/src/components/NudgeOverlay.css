@@ -72,6 +72,12 @@
   letter-spacing: 0.05em;
 }
 
+.nudge-modality {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
 .nudge-voice {
   font-size: 0.75rem;
   color: #a5b4fc;
@@ -97,6 +103,11 @@
   line-height: 1.5;
   color: #f1f5f9;
   font-style: italic;
+}
+
+.nudge-quote--muted {
+  color: #94a3b8;
+  font-size: 0.95rem;
 }
 
 .nudge-dismiss {

@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react'
-import type { NudgePayload } from '@shared/types'
+import { useEffect } from 'react'
+import type { NudgeModality, NudgePayload } from '@shared/types'
 import './NudgeOverlay.css'
 
 const DISMISS_MS = 8000
@@ -10,13 +10,32 @@ type NudgeOverlayProps = {
   fullscreen?: boolean
 }
 
+function resolveImageSrc(imagePath: string | undefined): string | undefined {
+  if (!imagePath) return undefined
+  if (
+    imagePath.startsWith('nudge://') ||
+    imagePath.startsWith('http://') ||
+    imagePath.startsWith('https://')
+  ) {
+    return imagePath
+  }
+  if (imagePath.startsWith('nudges/')) {
+    return `/${imagePath}`
+  }
+  return undefined
+}
+
+const MODALITY_LABEL: Record<NudgeModality, string> = {
+  quote: 'Coach line',
+  image: 'Visual nudge',
+  voice: 'Voice coach'
+}
+
 export function NudgeOverlay({
   nudge,
   onDismiss,
   fullscreen = false
 }: NudgeOverlayProps): React.ReactElement | null {
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-
   useEffect(() => {
     if (!nudge) return
 
@@ -24,25 +43,13 @@ export function NudgeOverlay({
     return () => window.clearTimeout(timer)
   }, [nudge, onDismiss])
 
-  useEffect(() => {
-    if (!nudge?.audioPath) return
-
-    const audio = new Audio(nudge.audioPath)
-    audioRef.current = audio
-    void audio.play().catch((err: unknown) => {
-      console.warn('[nudge:audio] playback failed:', err)
-    })
-
-    return () => {
-      audio.pause()
-      audioRef.current = null
-    }
-  }, [nudge])
-
   if (!nudge) return null
 
-  const imageSrc = nudge.imagePath?.startsWith('nudge://') ? nudge.imagePath : undefined
+  const modality = nudge.modality ?? 'quote'
+  const imageSrc = modality === 'image' ? resolveImageSrc(nudge.imagePath) : undefined
   const typeLabel = nudge.type === 'slouch' ? 'Posture' : 'Phone'
+  const showQuote = modality === 'quote'
+  const showVoiceHint = modality === 'voice'
 
   return (
     <div
@@ -51,17 +58,30 @@ export function NudgeOverlay({
       aria-label={`${typeLabel} coaching nudge`}
       onClick={onDismiss}
     >
-      <div className={`nudge-card ${fullscreen ? 'nudge-card--fullscreen' : ''}`} onClick={(e) => e.stopPropagation()}>
+      <div
+        className={`nudge-card ${fullscreen ? 'nudge-card--fullscreen' : ''}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <header className="nudge-header">
           <span className="nudge-type">{typeLabel}</span>
-          {nudge.audioPath && <span className="nudge-voice">Speaking…</span>}
+          <span className="nudge-modality">{MODALITY_LABEL[modality]}</span>
+          {showVoiceHint && <span className="nudge-voice">Speaking…</span>}
         </header>
 
         {imageSrc && (
-          <img className="nudge-image" src={imageSrc} alt="" />
+          <img
+            className="nudge-image"
+            src={imageSrc}
+            alt=""
+            onError={() => console.warn('[nudge:image] load failed:', imageSrc)}
+          />
         )}
 
-        <p className="nudge-quote">&ldquo;{nudge.quote}&rdquo;</p>
+        {showQuote && <p className="nudge-quote">&ldquo;{nudge.quote}&rdquo;</p>}
+
+        {showVoiceHint && !nudge.audioPath && (
+          <p className="nudge-quote nudge-quote--muted">Voice line loading…</p>
+        )}
 
         <button type="button" className="nudge-dismiss" onClick={onDismiss}>
           Got it

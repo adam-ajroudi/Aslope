@@ -1,4 +1,10 @@
-.webcam-panel {
+.webcam-vision-meta {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: center;
+}
+
   display: flex;
   flex-direction: column;
   gap: 0.75rem;

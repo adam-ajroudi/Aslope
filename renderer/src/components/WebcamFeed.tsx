@@ -1,11 +1,23 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import type { TriggerType } from '@shared/types'
+import { useVisionMonitor } from '../hooks/useVisionMonitor'
 import { cameraErrorMessage, countVideoInputs, openCameraStream } from '../vision/camera'
 import './WebcamFeed.css'
 
 type CameraStatus = 'idle' | 'requesting' | 'ready' | 'demo' | 'denied' | 'unavailable' | 'error'
 
-export function WebcamFeed(): React.ReactElement {
-  const videoRef = useRef<HTMLVideoElement>(null)
+type WebcamFeedProps = {
+  sessionId?: string | null
+  onTrigger?: (type: TriggerType) => void
+  triggerBusy?: boolean
+}
+
+export function WebcamFeed({
+  sessionId = null,
+  onTrigger,
+  triggerBusy = false
+}: WebcamFeedProps): React.ReactElement {
+  const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const [status, setStatus] = useState<CameraStatus>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -76,13 +88,13 @@ export function WebcamFeed(): React.ReactElement {
   }, [startCamera, attempt])
 
   useEffect(() => {
-    if (status !== 'ready' || !videoRef.current || !streamRef.current) return
+    if (status !== 'ready' || !videoEl || !streamRef.current) return
 
-    videoRef.current.srcObject = streamRef.current
-    void videoRef.current.play().catch((err: unknown) => {
+    videoEl.srcObject = streamRef.current
+    void videoEl.play().catch((err: unknown) => {
       console.error('[camera] play failed:', err)
     })
-  }, [status])
+  }, [status, videoEl])
 
   const retry = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => track.stop())
@@ -96,6 +108,18 @@ export function WebcamFeed(): React.ReactElement {
     setErrorMessage(null)
     setStatus('demo')
   }, [])
+
+  const visionEnabled = status === 'ready' && Boolean(sessionId) && !triggerBusy
+  const visionStatus = useVisionMonitor({
+    sessionId,
+    enabled: visionEnabled,
+    video: videoEl,
+    onTrigger: (type) => {
+      if (onTrigger && sessionId && !triggerBusy) {
+        onTrigger(type)
+      }
+    }
+  })
 
   const statusLabel: Record<CameraStatus, string> = {
     idle: 'Initializing camera…',
@@ -115,12 +139,18 @@ export function WebcamFeed(): React.ReactElement {
         {showFeed ? (
           <>
             {status === 'ready' && (
-              <video ref={videoRef} className="webcam-video" autoPlay playsInline muted />
+              <video
+                ref={setVideoEl}
+                className="webcam-video"
+                autoPlay
+                playsInline
+                muted
+              />
             )}
             {status === 'demo' && (
               <div className="webcam-demo" aria-label="Demo camera feed">
                 <div className="webcam-demo-grid" />
-                <p className="webcam-demo-label">Demo feed — use trigger buttons in sidebar</p>
+                <p className="webcam-demo-label">Demo feed — CV needs a live camera</p>
                 {isWsl && (
                   <p className="webcam-demo-hint">
                     No webcam under WSL2. For a live feed, run <code>pnpm dev</code> from{' '}
@@ -154,8 +184,19 @@ export function WebcamFeed(): React.ReactElement {
         )}
       </div>
       <p className={`webcam-status ${status === 'demo' ? 'webcam-status--demo' : ''}`}>
-        {statusLabel[status]}
+        {status === 'ready' && sessionId
+          ? visionStatus.statusMessage
+          : statusLabel[status]}
       </p>
+      {status === 'ready' && sessionId && visionStatus.modelStatus !== 'idle' && (
+        <p className="webcam-vision-meta">
+          {visionStatus.poseModelReady ? 'Posture: Dorso-style (MediaPipe)' : 'Posture: loading…'}
+          {' · '}
+          {visionStatus.phoneModelReady ? 'Phone: YOLO26' : 'Phone: loading…'}
+          {visionStatus.fps > 0 ? ` · ${visionStatus.fps} fps` : ''}
+          {visionStatus.phoneVisible ? ' · 📱 phone detected' : ''}
+        </p>
+      )}
     </section>
   )
 }
