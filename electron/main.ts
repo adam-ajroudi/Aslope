@@ -1,5 +1,9 @@
 import 'dotenv/config'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
+
+// Overlay nudges play TTS in a separate BrowserWindow with no prior user gesture.
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required')
+
 import { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
 import type { SeerBanterEvent } from '@shared/seer'
@@ -14,7 +18,7 @@ import {
   serveNudge,
   syncPrepToRedis
 } from './pipelines/assetCache'
-import { loadAgentMemory } from './services/agentMemory'
+import { loadAgentMemory, saveAgentMemory } from './services/agentMemory'
 import { runPostSession } from './pipelines/postSession'
 import { prepareSessionImages } from './pipelines/imageGeneration'
 import { countQuotes } from './pipelines/prepFallback'
@@ -34,14 +38,25 @@ import {
 import { registerReverseNudgeDelivery } from './services/reverseNudge'
 import { destroyOverlayWindow, hideOverlayWindow, showFullscreenNudge, showFullscreenReverseNudge } from './overlayWindow'
 import { disconnectRedis, isRedisReady } from './services/redis'
-import { setupMediaPermissions } from './services/mediaPermissions'
+import { setupMediaPermissions, configureWindowAudio } from './services/mediaPermissions'
 import { initSentryMain, Sentry } from './services/sentry'
+import { playNudgeAudio, stopNudgeAudio } from './services/nudgeAudio'
 import { normalizeAssetUrl } from './services/resolveAsset'
+import { applyModality, pickModality } from './services/nudgeModality'
 import { isWsl } from './services/systemInfo'
 import type { DevCoachEntry, DevCoachSubmitPayload, ReverseNudgePayload } from '@shared/devCoaching'
 
 initSentryMain()
 registerNudgeProtocol()
+
+process.on('uncaughtException', (err) => {
+  if (err.message?.includes('ECONNRESET') || err.message?.includes('ETIMEDOUT')) {
+    console.warn('[process] swallowed socket error:', err.message)
+    return
+  }
+  Sentry.captureException(err)
+  console.error('[process] uncaught:', err)
+})
 
 let mainWindow: BrowserWindow | null = null
 
@@ -68,6 +83,9 @@ function createWindow(): void {
   })
 
   mainWindow.on('ready-to-show', () => {
+    if (mainWindow) {
+      configureWindowAudio(mainWindow)
+    }
     mainWindow?.show()
   })
 
@@ -313,32 +331,44 @@ function registerIpcHandlers(): void {
     await Sentry.startSpan({ name: 'ipc.trigger:fire', op: 'ipc' }, async () => {
       console.log('[trigger:fire]', payload)
 
-      let nudge = serveNudge(DEFAULT_PROFILE.userId, payload.type)
+      const userId = DEFAULT_PROFILE.userId
+      const memory = await loadAgentMemory(userId)
+      const { modality, nextIndex } = pickModality(memory.nudgeModalityIndex ?? 0)
 
-      if (!nudge.audioPath) {
-        const liveAudio = await synthesizeLiveQuote(
-          DEFAULT_PROFILE.userId,
-          payload.type,
-          nudge.quote
-        )
+      const raw = serveNudge(userId, payload.type)
+      let nudge = applyModality({ ...raw, modality }, modality)
+
+      if (modality === 'voice' && !nudge.audioPath) {
+        const liveAudio = await synthesizeLiveQuote(userId, payload.type, raw.quote)
         if (liveAudio) {
           nudge = { ...nudge, audioPath: liveAudio }
         }
       }
 
-      if (nudge.imagePath) {
+      if (modality === 'image' && nudge.imagePath) {
         nudge = { ...nudge, imagePath: normalizeAssetUrl(nudge.imagePath) }
       }
+
+      void saveAgentMemory(userId, { ...memory, nudgeModalityIndex: nextIndex }).catch((err: unknown) => {
+        console.error('[memory:modality] save failed:', err)
+      })
+
+      console.log('[nudge:serve]', { modality, quote: nudge.quote, hasImage: Boolean(nudge.imagePath), hasAudio: Boolean(nudge.audioPath) })
 
       showFullscreenNudge(nudge, mainWindow)
       mainWindow?.webContents.send(IPC_CHANNELS.NUDGE_RECEIVE, nudge)
 
-      logTriggerEvent(DEFAULT_PROFILE.userId, {
+      if (modality === 'voice') {
+        playNudgeAudio(nudge.audioPath, mainWindow)
+      }
+
+      logTriggerEvent(userId, {
         eventId: uuidv4(),
         sessionId: payload.sessionId,
         timestamp: payload.timestamp,
         type: payload.type,
-        assetServed: nudge.imagePath ?? 'unknown',
+        modality,
+        assetServed: nudge.imagePath ?? nudge.audioPath ?? modality,
         quote: nudge.quote
       })
     })
@@ -346,6 +376,7 @@ function registerIpcHandlers(): void {
 
   ipcMain.on(IPC_CHANNELS.NUDGE_DISMISS, () => {
     hideOverlayWindow()
+    stopNudgeAudio()
   })
 }
 

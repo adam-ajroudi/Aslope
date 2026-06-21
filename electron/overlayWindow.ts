@@ -2,6 +2,7 @@ import { BrowserWindow, screen } from 'electron'
 import { join } from 'path'
 import type { ReverseNudgePayload } from '@shared/devCoaching'
 import { IPC_CHANNELS } from './ipc/channels'
+import { configureWindowAudio } from './services/mediaPermissions'
 import type { NudgePayload } from '@shared/types'
 
 let overlayWindow: BrowserWindow | null = null
@@ -86,6 +87,7 @@ function createOverlayWindow(anchor?: BrowserWindow | null): BrowserWindow {
   }
 
   win.webContents.on('did-finish-load', () => {
+    configureWindowAudio(win)
     if (pendingNudge && !win.isDestroyed()) {
       win.webContents.send(IPC_CHANNELS.NUDGE_RECEIVE, pendingNudge)
       pendingNudge = null

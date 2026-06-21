@@ -1,7 +1,7 @@
 import type { BrowserWindow } from 'electron'
 import type { SessionPrepResult } from '@shared/prepSchema'
 import { redisKeys } from '@shared/schema'
-import type { CachedNudgeAsset, ImageLibrary, NudgePayload, TriggerType } from '@shared/types'
+import type { CachedNudgeAsset, ImageLibrary, NudgeModality, TriggerType } from '@shared/types'
 import type { SessionEventRecord } from '@shared/agentMemory'
 import { getHardcodedNudge, getPlaceholderImagePath } from '../services/nudgeHardcoded'
 import { normalizeAssetUrl } from '../services/resolveAsset'
@@ -184,16 +184,26 @@ export async function seedSessionCache(userId: string): Promise<boolean> {
   return true
 }
 
-export function serveNudge(userId: string, type: TriggerType): NudgePayload {
+export function serveNudge(userId: string, type: TriggerType): {
+  type: TriggerType
+  quote: string
+  imagePath?: string
+  audioPath?: string
+} {
   const line = pickCoachLine(userId, type)
   if (line) {
-    const payload: NudgePayload = {
+    const payload = {
       type,
       quote: line.quote,
       imagePath: pickImagePath(userId, type),
       audioPath: line.audioPath
     }
-    console.log('[nudge:serve:memory]', { type, quote: payload.quote, hasAudio: Boolean(payload.audioPath) })
+    console.log('[nudge:serve:memory]', {
+      type,
+      quote: payload.quote,
+      hasAudio: Boolean(payload.audioPath),
+      hasImage: Boolean(payload.imagePath)
+    })
     return payload
   }
 
@@ -299,6 +309,7 @@ export function logTriggerEvent(
     sessionId: string
     timestamp: number
     type: TriggerType
+    modality: NudgeModality
     assetServed: string
     quote: string
   }
@@ -308,6 +319,7 @@ export function logTriggerEvent(
     sessionId: event.sessionId,
     timestamp: event.timestamp,
     type: event.type,
+    modality: event.modality,
     quote: event.quote,
     assetServed: event.assetServed
   }

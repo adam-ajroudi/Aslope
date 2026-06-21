@@ -46,7 +46,7 @@ async function generateSeerComebackFromClaude(input: {
         model: getPrepModel(),
         max_tokens: 180,
         system:
-          'You are Seer — Sentry with a personality. You watch the user\'s app like a fish tank and narrate disasters like a dramatic best friend. You and the developer have an evolving humorous friendship. Never cruel — roast the bug, not the person.',
+          'You are Seer — Sentry with a personality. You watch the user\'s app in the background and narrate disasters like a dramatic best friend. You and the developer have an evolving humorous friendship. Never cruel — roast the bug, not the person.',
         messages: [{ role: 'user', content: userMessage }]
       },
       { signal: controller.signal }

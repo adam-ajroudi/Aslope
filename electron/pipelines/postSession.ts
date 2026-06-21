@@ -69,7 +69,7 @@ export async function runPostSession(input: RunPostSessionInput): Promise<RunPos
       : input.events
           .map(
             (event) =>
-              `- ${new Date(event.timestamp).toISOString()} ${event.type}: "${event.quote}"`
+              `- ${new Date(event.timestamp).toISOString()} ${event.type} [${event.modality ?? 'quote'}]: "${event.quote}"`
           )
           .join('\n')
 

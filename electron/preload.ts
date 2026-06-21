@@ -54,6 +54,16 @@ const anchorAPI: AnchorAPI = {
     }
   },
 
+  onNudgeAudioPlay: (callback: (payload: { audioPath: string }) => void): (() => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, payload: { audioPath: string }): void => {
+      callback(payload)
+    }
+    ipcRenderer.on(IPC_CHANNELS.NUDGE_AUDIO_PLAY, handler)
+    return () => {
+      ipcRenderer.removeListener(IPC_CHANNELS.NUDGE_AUDIO_PLAY, handler)
+    }
+  },
+
   onReverseNudge: (callback: (payload: ReverseNudgePayload) => void): (() => void) => {
     const handler = (_event: Electron.IpcRendererEvent, payload: ReverseNudgePayload): void => {
       callback(payload)

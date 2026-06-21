@@ -5,6 +5,7 @@ export const IPC_CHANNELS = {
   MEMORY_GET: 'memory:get',
   TRIGGER_FIRE: 'trigger:fire',
   NUDGE_RECEIVE: 'nudge:receive',
+  NUDGE_AUDIO_PLAY: 'nudge:audio:play',
   NUDGE_DISMISS: 'nudge:dismiss',
   IMAGES_READY: 'images:ready',
   VOICE_READY: 'voice:ready',
