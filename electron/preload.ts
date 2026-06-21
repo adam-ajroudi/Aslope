@@ -25,6 +25,12 @@ const anchorAPI: AnchorAPI = {
   startSession: (payload: SessionStartPayload): Promise<SessionStartResult> =>
     ipcRenderer.invoke(IPC_CHANNELS.SESSION_START, payload),
 
+  endSession: (payload: SessionEndPayload): Promise<SessionEndResult> =>
+    ipcRenderer.invoke(IPC_CHANNELS.SESSION_END, payload),
+
+  getMemory: (): Promise<AgentMemory> =>
+    ipcRenderer.invoke(IPC_CHANNELS.MEMORY_GET),
+
   sendTrigger: (payload: TriggerPayload): Promise<void> =>
     ipcRenderer.invoke(IPC_CHANNELS.TRIGGER_FIRE, payload),
 
