@@ -37,6 +37,7 @@ export default defineConfig({
   renderer: {
     root: resolve(__dirname, 'renderer'),
     build: {
+      target: 'esnext',
       rollupOptions: {
         input: {
           index: resolve(__dirname, 'renderer/index.html'),
@@ -45,6 +46,9 @@ export default defineConfig({
       }
     },
     plugins: [react()],
+    optimizeDeps: {
+      exclude: ['@huggingface/transformers', 'onnxruntime-node']
+    },
     resolve: {
       alias: {
         '@shared': resolve(__dirname, 'shared')
