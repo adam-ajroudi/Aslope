@@ -21,9 +21,13 @@
 .app-main {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 240px;
+  grid-template-columns: 1fr 260px;
   gap: 1.5rem;
   align-items: start;
+}
+
+.app-stage {
+  position: relative;
 }
 
 .app-sidebar {
@@ -61,6 +65,13 @@
 .info-card dd {
   color: #e2e8f0;
   font-weight: 500;
+}
+
+.status-quote {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  font-weight: 400;
+  color: #cbd5e1;
 }
 
 @media (max-width: 720px) {

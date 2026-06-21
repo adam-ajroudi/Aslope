@@ -8,7 +8,11 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 
-Sentry.init()
+Sentry.init({
+  integrations: [Sentry.replayIntegration()],
+  replaysSessionSampleRate: import.meta.env.DEV ? 1.0 : 0.1,
+  replaysOnErrorSampleRate: 1.0
+})
 
 Sentry.addBreadcrumb({
   category: 'app',

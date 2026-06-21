@@ -1,0 +1,124 @@
+.session-setup h2 {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+}
+
+.session-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 0.35rem;
+}
+
+.session-input {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #f1f5f9;
+  font-size: 0.875rem;
+}
+
+.session-input:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
+}
+
+.session-btn {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  background: #1e293b;
+  color: #e2e8f0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.session-btn:hover:not(:disabled) {
+  background: #334155;
+  border-color: #64748b;
+}
+
+.session-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.session-btn--primary {
+  background: #2563eb;
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.session-btn--primary:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.session-active {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4ade80;
+  margin-bottom: 0.15rem;
+}
+
+.session-id {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-family: ui-monospace, monospace;
+  margin-bottom: 0.35rem;
+}
+
+.session-cache {
+  font-size: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.session-cache--ok {
+  color: #4ade80;
+}
+
+.session-cache--fallback {
+  color: #fbbf24;
+}
+
+.session-mode {
+  border: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+}
+
+.session-mode legend {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 0.35rem;
+}
+
+.session-mode label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  margin-bottom: 0.25rem;
+  cursor: pointer;
+}
+
+.session-hint {
+  font-size: 0.7rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.session-triggers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
