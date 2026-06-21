@@ -11,5 +11,8 @@ export const redisKeys = {
   memvec: (userId: string) => `memvec:${userId}`,
   milestone: (userId: string) => `milestone:${userId}`,
   prepPrompts: (userId: string) => `prep:${userId}:prompts`,
-  sessionEvents: (sessionId: string) => `events:session:${sessionId}`
+  sessionEvents: (sessionId: string) => `events:session:${sessionId}`,
+  devCoaching: (userId: string) => `devcoaching:${userId}`,
+  seer: (userId: string) => `seer:${userId}`,
+  seerBanter: (userId: string) => `seer:banter:${userId}`
 }

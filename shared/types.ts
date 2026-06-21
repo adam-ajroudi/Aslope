@@ -1,4 +1,9 @@
-import type { AgentMemory, PostSessionResult, SessionEventRecord } from './agentMemory'
+import type { AgentMemory, PostSessionResult } from './agentMemory'
+import type { DevCoachEntry, DevCoachSubmitPayload, ReverseNudgePayload } from './devCoaching'
+import type { SeerRelationship } from './seer'
+
+export type { DevCoachEntry, DevCoachSubmitPayload, ReverseNudgePayload } from './devCoaching'
+export type { SeerBanterEvent, SeerRelationship, SeerVibe } from './seer'
 
 export type TriggerType = 'slouch' | 'phone'
 
@@ -78,8 +83,15 @@ export type SystemInfo = {
   redisConnected: boolean
 }
 
+export type SeerState = {
+  relationship: SeerRelationship
+  vibeLabel: string
+}
+
 export type OverlayAPI = {
   onNudge: (callback: (payload: NudgePayload) => void) => () => void
+  onReverseNudge: (callback: (payload: ReverseNudgePayload) => void) => () => void
+  submitDevCoach: (payload: DevCoachSubmitPayload) => Promise<DevCoachEntry>
   dismiss: () => void
 }
 
@@ -89,10 +101,15 @@ export type AnchorAPI = {
   startSession: (payload: SessionStartPayload) => Promise<SessionStartResult>
   endSession: (payload: SessionEndPayload) => Promise<SessionEndResult>
   getMemory: () => Promise<AgentMemory>
+  getDevCoaching: () => Promise<DevCoachEntry[]>
+  getSeerState: () => Promise<SeerState>
+  stressTest: () => Promise<void>
   sendTrigger: (payload: TriggerPayload) => Promise<void>
   onNudge: (callback: (payload: NudgePayload) => void) => () => void
   onImagesReady: (callback: (payload: ImagesReadyPayload) => void) => () => void
   onVoiceReady: (callback: (payload: VoiceReadyPayload) => void) => () => void
+  onDevCoachingSaved: (callback: (entry: DevCoachEntry) => void) => () => void
+  onReverseNudge: (callback: (payload: ReverseNudgePayload) => void) => () => void
 }
 
 declare global {

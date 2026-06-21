@@ -8,6 +8,12 @@ export const IPC_CHANNELS = {
   NUDGE_DISMISS: 'nudge:dismiss',
   IMAGES_READY: 'images:ready',
   VOICE_READY: 'voice:ready',
+  REVERSE_NUDGE_RECEIVE: 'reverse-nudge:receive',
+  DEV_COACH_SUBMIT: 'dev-coach:submit',
+  DEV_COACHING_GET: 'dev-coaching:get',
+  DEV_COACHING_SAVED: 'dev-coaching:saved',
+  SEER_STATE_GET: 'seer:state:get',
+  DEV_STRESS_TEST: 'dev:stress-test',
   SYSTEM_INFO: 'system:info'
 } as const
 
