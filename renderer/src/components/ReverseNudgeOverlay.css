@@ -1,0 +1,205 @@
+.reverse-nudge-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(30, 10, 50, 0.85);
+  backdrop-filter: blur(10px);
+  animation: reverse-nudge-fade-in 0.2s ease-out;
+}
+
+.reverse-nudge-overlay--fullscreen {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes reverse-nudge-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.reverse-nudge-card {
+  width: min(560px, 100%);
+  background: #1a0f2e;
+  border: 1px solid #6d28d9;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 48px rgba(109, 40, 217, 0.25);
+  padding: 1rem 1.25rem 1.25rem;
+  animation: reverse-nudge-slide-up 0.25s ease-out;
+}
+
+.reverse-nudge-card--fullscreen {
+  width: min(720px, 92vw);
+}
+
+@keyframes reverse-nudge-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reverse-nudge-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.reverse-nudge-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(109, 40, 217, 0.35);
+  color: #ddd6fe;
+}
+
+.reverse-nudge-component {
+  font-size: 0.75rem;
+  color: #a78bfa;
+  font-family: ui-monospace, monospace;
+}
+
+.reverse-nudge-plea {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: #f5f3ff;
+  font-style: italic;
+  margin: 0 0 0.75rem;
+}
+
+.reverse-nudge-error {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #c4b5fd;
+  background: #0f0720;
+  border: 1px solid #4c1d95;
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+  margin: 0 0 1rem;
+}
+
+.reverse-nudge-error-label {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #7c3aed;
+  margin-bottom: 0.2rem;
+}
+
+.reverse-nudge-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #a78bfa;
+  margin-bottom: 0.35rem;
+}
+
+.reverse-nudge-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.6rem 0.75rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #5b21b6;
+  border-radius: 8px;
+  background: #0f0720;
+  color: #f5f3ff;
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.reverse-nudge-input:focus {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 1px;
+}
+
+.reverse-nudge-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.reverse-nudge-submit {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 8px;
+  background: #7c3aed;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reverse-nudge-submit:hover:not(:disabled) {
+  background: #6d28d9;
+}
+
+.reverse-nudge-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.reverse-nudge-skip {
+  padding: 0.6rem 1rem;
+  border: 1px solid #4c1d95;
+  border-radius: 8px;
+  background: transparent;
+  color: #c4b5fd;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.reverse-nudge-vibe {
+  font-size: 0.7rem;
+  color: #c4b5fd;
+  font-style: italic;
+}
+
+.reverse-nudge-component-tag {
+  display: block;
+  margin-top: 0.25rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.7rem;
+  color: #7c3aed;
+}
+
+.reverse-nudge-card--reply {
+  text-align: center;
+}
+
+.reverse-nudge-reply {
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: #f5f3ff;
+  font-style: italic;
+  margin: 0.5rem 0;
+}
+
+.reverse-nudge-reply-hint {
+  font-size: 0.75rem;
+  color: #a78bfa;
+  margin: 0;
+}
+
+.reverse-nudge-error-msg {
+  font-size: 0.8rem;
+  color: #fca5a5;
+  margin: 0 0 0.5rem;
+}

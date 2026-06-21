@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
+import { DevCoachPanel } from './components/DevCoachPanel'
+import { SessionDashboard } from './components/SessionDashboard'
 import { SessionSetup } from './components/SessionSetup'
 import { WebcamFeed } from './components/WebcamFeed'
-import type { Profile, TriggerType } from '@shared/types'
+import type { AgentMemory, PostSessionResult } from '@shared/agentMemory'
+import type { DevCoachEntry } from '@shared/devCoaching'
+import type { Profile, SeerState, TriggerType } from '@shared/types'
 
 export default function App(): React.ReactElement {
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -12,12 +16,18 @@ export default function App(): React.ReactElement {
   const [prepSource, setPrepSource] = useState<'claude' | 'fallback' | null>(null)
   const [quoteCount, setQuoteCount] = useState(0)
   const [sessionPreparing, setSessionPreparing] = useState(false)
+  const [sessionEnding, setSessionEnding] = useState(false)
   const [triggerBusy, setTriggerBusy] = useState(false)
   const [lastTrigger, setLastTrigger] = useState<string | null>(null)
   const [lastQuote, setLastQuote] = useState<string | null>(null)
   const [imageCount, setImageCount] = useState(0)
   const [voicePending, setVoicePending] = useState(false)
   const [audioCount, setAudioCount] = useState(0)
+  const [postSession, setPostSession] = useState<PostSessionResult | null>(null)
+  const [memory, setMemory] = useState<AgentMemory | null>(null)
+  const [devCoaching, setDevCoaching] = useState<DevCoachEntry[]>([])
+  const [seerState, setSeerState] = useState<SeerState | null>(null)
+  const [stressTesting, setStressTesting] = useState(false)
 
   useEffect(() => {
     if (!window.anchor) {
@@ -32,6 +42,27 @@ export default function App(): React.ReactElement {
       .then(setProfile)
       .catch((err: unknown) => {
         console.error('Failed to load profile:', err)
+      })
+
+    window.anchor
+      .getMemory()
+      .then(setMemory)
+      .catch((err: unknown) => {
+        console.error('Failed to load memory:', err)
+      })
+
+    window.anchor
+      .getSeerState()
+      .then(setSeerState)
+      .catch((err: unknown) => {
+        console.error('Failed to load Seer state:', err)
+      })
+
+    window.anchor
+      .getDevCoaching()
+      .then(setDevCoaching)
+      .catch((err: unknown) => {
+        console.error('Failed to load dev coaching:', err)
       })
 
     window.anchor
@@ -59,10 +90,16 @@ export default function App(): React.ReactElement {
       setAudioCount(payload.audioCount)
     })
 
+    const unsubscribeDevCoach = window.anchor.onDevCoachingSaved((entry) => {
+      setDevCoaching((prev) => [entry, ...prev].slice(0, 20))
+      void window.anchor?.getSeerState().then(setSeerState)
+    })
+
     return () => {
       unsubscribeNudge()
       unsubscribeImages()
       unsubscribeVoice()
+      unsubscribeDevCoach()
     }
   }, [])
 
@@ -70,6 +107,7 @@ export default function App(): React.ReactElement {
     if (!window.anchor) return
 
     setSessionPreparing(true)
+    setPostSession(null)
 
     try {
       const result = await window.anchor.startSession({ taskIntent })
@@ -91,6 +129,45 @@ export default function App(): React.ReactElement {
       setSessionPreparing(false)
     }
   }, [])
+
+  const handleSessionEnd = useCallback(async () => {
+    if (!window.anchor || !sessionId || sessionEnding) return
+
+    setSessionEnding(true)
+
+    try {
+      const result = await window.anchor.endSession({ sessionId })
+      setPostSession(result)
+      setMemory(result.memory)
+      setSessionId(null)
+      setPrepSource(null)
+      setQuoteCount(0)
+      setImageCount(0)
+      setVoicePending(false)
+      setAudioCount(0)
+      setLastTrigger(null)
+      setLastQuote(null)
+
+      console.log('[session:complete]', result)
+    } catch (err) {
+      console.error('Session end failed:', err)
+    } finally {
+      setSessionEnding(false)
+    }
+  }, [sessionEnding, sessionId])
+
+  const handleStressTest = useCallback(async () => {
+    if (!window.anchor || stressTesting) return
+
+    setStressTesting(true)
+    try {
+      await window.anchor.stressTest()
+    } catch (err) {
+      console.error('Stress test failed:', err)
+    } finally {
+      setStressTesting(false)
+    }
+  }, [stressTesting])
 
   const handleTrigger = useCallback(
     async (type: TriggerType) => {
@@ -135,9 +212,28 @@ export default function App(): React.ReactElement {
               voicePending={voicePending}
               audioCount={audioCount}
               preparing={sessionPreparing}
+              ending={sessionEnding}
               onSessionStart={handleSessionStart}
+              onSessionEnd={handleSessionEnd}
               onTrigger={handleTrigger}
               busy={triggerBusy}
+            />
+          </div>
+
+          <div className="info-card">
+            <DevCoachPanel
+              entries={devCoaching}
+              seerState={seerState}
+              onStressTest={handleStressTest}
+              stressTesting={stressTesting}
+            />
+          </div>
+
+          <div className="info-card">
+            <SessionDashboard
+              postSession={postSession}
+              memory={memory}
+              ending={sessionEnding}
             />
           </div>
 
@@ -145,13 +241,19 @@ export default function App(): React.ReactElement {
             <h2>Status</h2>
             <dl>
               <dt>Milestone</dt>
-              <dd>M6 — Voice coaching</dd>
+              <dd>M7 + Reverse Nudge</dd>
               <dt>IPC bridge</dt>
               <dd>{ipcReady ? 'Connected' : 'Unavailable'}</dd>
               <dt>Redis</dt>
               <dd>{redisConnected ? 'Connected' : 'Memory fallback'}</dd>
               <dt>Profile</dt>
               <dd>{profile ? profile.userId : 'Loading…'}</dd>
+              <dt>Memory</dt>
+              <dd>
+                {memory && memory.totalSessions > 0
+                  ? `${memory.totalSessions} sessions, ${memory.wins.length} wins`
+                  : 'No sessions yet'}
+              </dd>
               <dt>Coaching</dt>
               <dd>
                 {prepSource === 'claude'
