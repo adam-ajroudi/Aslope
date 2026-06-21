@@ -13,17 +13,19 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.node.json"
   },
   "dependencies": {
-    "@sentry/electron": "^6.5.0",
+    "@anthropic-ai/sdk": "^0.105.0",
+    "@sentry/electron": "^6.11.0",
     "dotenv": "^16.4.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "redis": "^6.0.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@types/node": "^22.13.4",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@types/uuid": "^10.0.0",
-    "@types/node": "^22.13.4",
     "@vitejs/plugin-react": "^4.3.4",
     "electron": "^34.2.0",
     "electron-vite": "^3.0.0",
