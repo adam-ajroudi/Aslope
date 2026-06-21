@@ -1,0 +1,40 @@
+.webcam-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.webcam-frame {
+  aspect-ratio: 16 / 9;
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.webcam-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.webcam-placeholder {
+  padding: 2rem;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.webcam-error {
+  margin-top: 0.5rem;
+  color: #f87171;
+  font-size: 0.875rem;
+}
+
+.webcam-status {
+  font-size: 0.875rem;
+  color: #6ee7b7;
+}

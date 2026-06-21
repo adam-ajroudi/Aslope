@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Build output
+out/
+dist/
+
+# Environment and secrets
+.env
+.env.local
+
+# Cached assets (generated at runtime)
+data/cache/
+
+# OS / editor
+.DS_Store
+*.log
+.vscode/
+.idea/
